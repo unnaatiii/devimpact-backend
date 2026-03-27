@@ -1,21 +1,10 @@
-const express = require("express");
-const cors = require("cors");
+/**
+ * Legacy entry — the app runs via TypeScript:
+ *   npm run dev    → tsx watch src/server.ts
+ *   npm start      → tsx src/server.ts
+ */
+console.error(
+  "Use `npm run dev` or `npm start` from devimpact-backend (runs src/server.ts).",
+);
+process.exit(1);
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (req, res) => {
-    console.log("HIT / route");
-  res.send("Backend is running 🚀");
-});
-
-app.listen(8000, () => {
-    console.log("Server running on port 8000");
-  
-});
-app.get("/api/test", (req, res) => {
-    res.json({ message: "Backend connected successfully 🚀" });
-    console.log("HIT /api/test route");
-  });
