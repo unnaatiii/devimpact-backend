@@ -50,6 +50,7 @@ import {
   listCommitsIngestedSince,
   upsertOrgTenantMap,
   getAnalysisHistory,
+  upsertGitHubAccount,
 } from "./services/dbService.js";
 import { runWebhookAiBatchForUser, ScoringEngine } from "./services/aiService.js";
 import { GitHubService } from "./services/githubService.js";
@@ -735,6 +736,11 @@ app.post("/api/github/list-repos", async (req, res) => {
     if (isAnalysisDbConfigured()) {
       const uid = getUserId(authToken);
       if (uid) {
+        void upsertGitHubAccount(uid, {
+          githubUserId: user.id,
+          login: user.login,
+          avatarUrl: user.avatar_url ?? null,
+        });
         console.log(`[list-repos] Saving ${all.length} repos to Supabase for tenant ${uid.slice(0, 12)}…`);
         try {
           for (const r of all) {

@@ -747,6 +747,8 @@ Return the JSON object now.`;
       repoLabel: commit.repoLabel,
       repoType: commit.repoType,
       filesChanged: commit.filesChanged,
+      additions: commit.additions,
+      deletions: commit.deletions,
       isMergeCommit: commit.isMergeCommit,
       analysis,
       modelUsed,

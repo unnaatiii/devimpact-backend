@@ -901,6 +901,35 @@ export async function getAnalysisHistory(
   return listAnalysisRuns(userId, limit);
 }
 
+/** Upsert GitHub profile for this tenant (OAuth or PAT). Safe to call on every list-repos. */
+export async function upsertGitHubAccount(
+  userId: string,
+  profile: { githubUserId: number; login: string; avatarUrl: string | null },
+): Promise<boolean> {
+  const supabase = getClient();
+  if (!supabase || !userId?.trim()) return false;
+  try {
+    const { error } = await supabase.from("github_accounts").upsert(
+      {
+        user_id: userId.trim(),
+        github_user_id: profile.githubUserId,
+        login: profile.login.trim(),
+        avatar_url: profile.avatarUrl?.trim() || null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    );
+    if (error) {
+      console.error("[lib/db] upsertGitHubAccount:", error.message);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error("[lib/db] upsertGitHubAccount:", e);
+    return false;
+  }
+}
+
 // ── Org webhook + navbar polls ────────────────────────────────────────────────
 
 export async function getUserIdForOrgLogin(orgLogin: string): Promise<string | null> {
